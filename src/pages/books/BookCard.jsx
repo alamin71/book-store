@@ -31,9 +31,9 @@ const BookCard = ({ book }) => {
               </h3>
             </Link>
             <p className="text-gray-600 mb-5">
-              {book?.description > 80
+              {book?.description && book.description.length > 80
                 ? `${book.description.slice(0, 80)}...`
-                : book?.description}
+                : book?.description || "No description available"}
             </p>
             <p className="font-medium mb-5">
               ${book?.newPrice}{" "}
