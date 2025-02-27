@@ -74,7 +74,9 @@ const Footer = () => {
           </li>
         </ul>
         {/* middle */}
-        <p>Copyright © 2025, Al-Amin - All rights reserved</p>
+        <p className="flex items-center text-center mb-4 md:mb-0">
+          Copyright © 2025, Al-Amin - All rights reserved
+        </p>
         {/* Right Side - Social Icons */}
         <div className="flex gap-6">
           <a
