@@ -6,10 +6,11 @@ import {
   HiOutlineShoppingCart,
 } from "react-icons/hi";
 import avatarImg from "../assets/avatar.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useAuth } from "../context/AuthContext";
+import { useFetchAllBooksQuery } from "../redux/features/books/booksApi";
 
 const navigation = [
   { name: "Dashboard", href: "/user-dashboard" },
@@ -20,13 +21,47 @@ const navigation = [
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredBooks, setFilteredBooks] = useState([]);
+
   const cartItems = useSelector((state) => state.cart.cartItems);
-  // console.log(cartItems);
-  // console.log(isDropdownOpen);
   const { currentUser, logOut } = useAuth();
+
+  //  Fetch Books from API
+  const { data: books, isLoading, error } = useFetchAllBooksQuery();
+  console.log("Fetched Books:", books);
+
   const handleLogOut = () => {
     logOut();
   };
+  const token = localStorage.getItem("token");
+
+  const navigate = useNavigate();
+
+  //  Handle Book Click to navigate to SingleBook Page
+  const handleBookClick = (bookId) => {
+    console.log("Navigating to book ID:", bookId);
+    navigate(`/books/${bookId}`);
+    setSearchQuery("");
+    setFilteredBooks([]);
+  };
+
+  //  Search Function
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    if (books.length > 0 && query.length > 0) {
+      const filtered = books.filter((book) =>
+        book.title?.toLowerCase().includes(query)
+      );
+      setFilteredBooks(filtered);
+      console.log("Filtered Books:", filtered);
+    } else {
+      setFilteredBooks([]);
+    }
+  };
+
   return (
     <header className="max-w-screen-2xl mx-auto px-4 py-6">
       <nav className="flex justify-between items-center">
@@ -37,15 +72,41 @@ const Navbar = () => {
           </Link>
 
           {/* search input */}
-          <div className="relative sm:w-72 w-40 space-x-2">
+          <div className="relative sm:w-72 w-40">
             <input
               type="text"
-              placeholder="Search here"
+              placeholder="Search books..."
               className="bg-[#EAEAEA] w-full py-1 md:px-8 px-6 rounded-md focus:outline-none"
+              value={searchQuery}
+              onChange={handleSearch} //  Search Trigger
             />
             <IoSearchOutline className="absolute inline-block right-3 inset-y-2" />
+
+            {/* 🔹 Search Results Dropdown */}
+            {searchQuery && (
+              <div className="absolute top-10 left-0 w-full bg-white shadow-md rounded-md z-40">
+                {isLoading ? (
+                  <p className="px-4 py-2 text-gray-500">Loading...</p>
+                ) : error ? (
+                  <p className="px-4 py-2 text-red-500">Error fetching books</p>
+                ) : filteredBooks.length > 0 ? (
+                  filteredBooks.map((book) => (
+                    <div
+                      key={book._id}
+                      className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => handleBookClick(book._id)} // Handle Book Click
+                    >
+                      {book.title}
+                    </div>
+                  ))
+                ) : (
+                  <p className="px-4 py-2 text-gray-500">No results found</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
         {/* right side */}
         <div className="relative flex items-center md:space-x-3 space-x-2">
           <div>
@@ -54,15 +115,15 @@ const Navbar = () => {
                 <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                   <img
                     src={avatarImg}
-                    alt=""
+                    alt="Avatar"
                     className={`size-7 rounded-full ${
                       currentUser ? "ring-2 ring-blue-500" : ""
                     }`}
                   />
                 </button>
-                {/* show drodown */}
+                {/* Show dropdown */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-40">
+                  <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md z-50">
                     <ul className="py-2">
                       {navigation.map((item) => (
                         <li
@@ -89,13 +150,16 @@ const Navbar = () => {
                   </div>
                 )}
               </>
+            ) : token ? (
+              <Link to="/dashboard" className="border-b-2 border-primary">
+                Dashboard
+              </Link>
             ) : (
               <Link to="/login">
                 <HiOutlineUser className="size-6" />
               </Link>
             )}
           </div>
-
           <button className="hidden sm:block">
             <HiOutlineHeart className="size-6" />
           </button>
