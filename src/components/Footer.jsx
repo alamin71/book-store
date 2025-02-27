@@ -1,6 +1,11 @@
 import footerLogo from "../assets/footer-logo.png";
 
-import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedinIn,
+  FaTwitter,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -68,9 +73,18 @@ const Footer = () => {
             </a>
           </li>
         </ul>
-
+        {/* middle */}
+        <p>Copyright © 2025, Al-Amin - All rights reserved</p>
         {/* Right Side - Social Icons */}
         <div className="flex gap-6">
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary"
+          >
+            <FaLinkedinIn size={24} />
+          </a>
           <a
             href="https://facebook.com"
             target="_blank"
