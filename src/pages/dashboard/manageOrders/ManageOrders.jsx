@@ -1,9 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { useGetAllOrdersQuery } from "../../../redux/features/orders/ordersApi";
+import {
+  useDeleteOrderMutation,
+  useGetAllOrdersQuery,
+} from "../../../redux/features/orders/ordersApi";
 
 const ManageOrders = () => {
   const navigate = useNavigate();
-  const { data: orders, isLoading, isError, error } = useGetAllOrdersQuery();
+  const {
+    data: orders,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetAllOrdersQuery();
   // console.log("Orders Data:", orders);
 
   if (isLoading) {
@@ -13,6 +22,19 @@ const ManageOrders = () => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
+  // Handle deleting a order
+
+  const [deleteOrder] = useDeleteOrderMutation();
+  const handleDeleteOrder = async (id) => {
+    try {
+      await deleteOrder(id).unwrap();
+      alert("Order deleted successfully!");
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete order:", error.message);
+      alert("Failed to delete order. Please try again.");
+    }
+  };
 
   return (
     <section className="py-1 bg-blueGray-50">
@@ -70,7 +92,7 @@ const ManageOrders = () => {
                           View Details
                         </button>
                         <button
-                          // onClick={() => handleDeleteOrder(order._id)}
+                          onClick={() => handleDeleteOrder(order._id)}
                           className="font-medium bg-red-500 py-1 px-4 rounded-full text-white mr-2"
                         >
                           Delete

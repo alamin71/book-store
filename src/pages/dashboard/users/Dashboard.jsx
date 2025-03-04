@@ -78,7 +78,12 @@ const Dashboard = () => {
           </div>
           <div>
             <span className="block text-2xl font-bold">
-              ${data?.totalSales}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(data?.totalSales)}
             </span>
             <span className="block text-gray-500">Total Sales</span>
           </div>
@@ -308,7 +313,7 @@ const Dashboard = () => {
         </div>
       </section>
       <section className="text-right font-semibold text-gray-500">
-        <p>Copyright © 2025, Al-Amin - All rights reserved</p>
+        <p>Copyright © 2025, Al-Amin-dev - All rights reserved</p>
       </section>
     </>
   );
