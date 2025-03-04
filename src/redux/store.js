@@ -11,5 +11,5 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(booksApi.middleware, ordersApi.middleware),
 });
-console.log("Redux Store:", store.getState());
+// console.log("Redux Store:", store.getState());
 export default store;

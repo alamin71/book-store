@@ -19,6 +19,13 @@ const ordersApi = createApi({
       invalidatesTags: ["Orders"],
     }),
 
+    getSingleOrder: builder.query({
+      query: () => ({
+        url: "/",
+      }),
+      providesTags: ["Orders"],
+    }),
+
     getAllOrders: builder.query({
       query: () => ({
         url: "/",
@@ -44,6 +51,7 @@ const ordersApi = createApi({
 
 export const {
   useCreateOrderMutation,
+  useGetSingleOrderQuery,
   useGetOrderByEmailQuery,
   useGetAllOrdersQuery,
   useDeleteOrderMutation,
